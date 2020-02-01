@@ -95,7 +95,27 @@ label day_over:
     jump start
 
 label nv_continue:
+    #show bg files
+    menu:
+        "What is happening today?"
+        "Natasha and Vasili appointment":
+            jump nv_re_enter
+        "Pass the day and do nothing":
+            jump do_nothing_day
+
+label do_nothing_day:
+    "You do nothing today, +$50. Natasha and Vasili don't seem to be doing any better, however"
+
+label nv_re_enter:  
     "The couple re-enter your office"
+    p "Welcome back!"
+    menu:
+        "Who do you want to talk to today?"
+        "Natasha":
+            jump nat_1_questions
+        "Vasili":
+            jump vas_2_questions
+        
 
 label nat_1_questions:
     menu:
@@ -311,5 +331,15 @@ label nat_1b_c:
     $ nat_trust -= 2
 
 
-label vas_1_questions:
-    "not implemented"
+label vas_2_questions:
+    menu:
+        "Upbringing":
+            jump vas_2a
+        "Childhood with Natasha":
+            jump vas_2b
+
+label vas_2a:
+    "Noto Implementato"
+
+label vas_2b:
+    "Noto Implementato"
