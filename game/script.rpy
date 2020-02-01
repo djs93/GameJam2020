@@ -211,6 +211,105 @@ label nat_1b:
     p "Can I ask about your family?  It’s nice to get a feel for someone’s guidance when trying to diagnose issues."
     if nvtrust < 3:
         nat "I apologize, but I doubt that will help me fix my marriage…"
+        jump day_over
+    else:
+        nat "I don’t mind talking about this… I had three brothers and a father."
+        p "No mother?"
+        nat "She... left when I was young"
+        menu:
+            "What should I do now?"
+            "Ask about her father ":
+                jump nat_1b_a
+            "Ask about her brothers":
+                jump nat_1b_b
+            "Insult her about it":
+                jump nat_1b_c
+
+label nat_1b_a:
+    p "What was your father like? Was he a nice man?"
+    if nat_trust < 4:
+        nat "{i}Glances at Vasili{/i} I-I don't want to talk about him. He didn't like Vasili much."
+        jump day_over
+    else:
+        nat "The kindest! He called me his little leopard! He used to give the best hugs!"
+        vas "If he was friendly, he wouldn't have said those things about me… Dont forget that."
+        nat "Oh darling, he was just worried about me!  He didn’t mean anything he said!"
+        vas "BAH! I have nothing more to say about it!"
+        p "I see."
+
+        p "What happened between your father and Vasili?"
+        v "ABSOLUTELY NOTHING! And yet, when I started getting romantically involved with his daughter, he bad mouthed me and called me manipulative!"
+
+        menu:
+            "What should I say?"
+            "Side with her father":
+                jump nat_1b_a_a_a
+            "Side with Vasili":
+                jump nat_1b_a_a_b
+
+label nat_1b_a_a_a:
+    p "Sometimes an outside perspective can show our deepest issues…"
+    vas "That's ridiculous! You are a SHIT therapist!"
+    nat "My father was always good at reading people…" 
+    $ nv_breakup += 1
+    if nv_breakup == 3:
+        jump nv_breakup_scene
+    $ vas_trust -= 2
+    vas "Your father was stupid!"
+
+    jump day_over
+
+label nat_1b_a_a_b:
+    p "Preposterous! You have been nothing but good to Natasha!"
+    vas "FINALLY, someone else sees sense.  I’m glad we came to you, anyone else would have no sense!"
+    nat "I guess he was a bit… over dramatic." 
+    $ nv_stab += 5
+    $ vas_trust += 2
+
+    jump day_over
+
+label nat_1b_b:
+    p "You mentioned three brothers, what was that like? I can't imagine it was comfortable living with that many men."
+    nat "On the contrary, it made me as strong as I am today.  We fought constantly and I slowly started winning. Family truly does make one stronger, emotionally and, in my case, physically!"
+    p "Three older brothers I’m guessing?"
+    nat "Two actually, I have one younger brother. Such a frail boy. His name is Avali."  
+    nat "He was actually the one who asked me to come here. He was so worried. It was cute. But I came anyway!"
+    vas "Little twerp is wasting my money."
+
+    menu:
+            "What should I say?"
+            "Defend Natasha's brother":
+                jump nat_1b_b_a
+            "Stay silent":
+                jump day_over
+
+label nat_1b_b_a:
+    p "Don’t speak like that about her brother, it’s obvious she loves him very much, and your being rude."
+    nat "No, no, Avali is a handful sometimes, and sometimes, he gets on Vasili’s nerves."  
+    nat "But Vasili{w 0.2}.{w 0.2}.{w 0.2}.{w 0.5} deals with it."
+    p "How does he deal with it?"
+    vas "I beat sense into him. The way my father did it." 
+    nat "Y-Y-you beat him?!?! How could you?!"
+    vas "He needs it, he never learns Natty!"
+    nat "I-I-Im gonna be sick."
+    $ nv_stab -= 15
+    $ nat_trust += 2 
+    $ nv_breakup += 1
+
+    jump day_over
+
+label nat_1b_c:
+    # you are an awful person. love, Dale
+    p "What happened to your mother? Did she hate you enough just to leave?" 
+    p "You must be the problem, one daughter and you couldn’t even act feminine."
+    p "What do your brothers or father think of you now? Or did they cut all contact with you?"
+    p "A woman,{w 0.6} working at the docks. {w 0.6}In this day and age. {w 0.6}Disgraceful."
+    vas "HAHAHA finally someone who can think like me! See Natty?" 
+    $ nv_stab += 3
+    $ vas_trust += 1
+    nat "I-I-I can’t help it. I-I-Its not true... {i}avoids eye contact{/i}" 
+    $ nat_trust -= 2
+
 
 label vas_1_questions:
     "not implemented"
