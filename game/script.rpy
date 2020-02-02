@@ -3,14 +3,14 @@
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
 
-define nat = Character("Natasha", who_color="#985298")
+define nat = Character("Natascha", who_color="#985298")
 define vas = Character("Vasili", who_color="#580000")
 define p = Character("You")
 define narrator = Character(None, what_italic = True)
 
-default nv_stab = 0
-default nat_trust = 0
-default vas_trust = 0
+default nv_stab = 30 # At 0, breakup. 60 cure.
+default nat_trust = 3
+default vas_trust = 3
 default day = 0
 
 default nv_cure = 0 # Trigger special ending on 5
@@ -57,7 +57,7 @@ label nv_intro:
             vas "{i}HAHAHAHA{/i}, this man meant no harm, if only you {i}LOOKED{/i} feminine, this wouldn't happen dear."
             vas "Now please help your {i}crippled{/i} husband through this door."
 
-            p "Oh, I'm so sorry. Natasha I presume"
+            p "Oh, I'm so sorry. Natascha I presume"
 
             nat "{i}Nods and helps Vasili thorugh the door{/i} Yes, Vasili, darling I am sorry, I was not thinking"
         
@@ -76,14 +76,14 @@ label nv_intro:
             $ vas_trust += 1
         
     p "Now if you may, please sit down and we can continue"
-    "Natasha and Vasili sit down"
+    "Natascha and Vasili sit down"
 
     menu:
         p "{i}I need to ask one of these clients questions to figure out what is going on…{/i}"
-        "Natasha":
+        "Natascha":
             jump nat_1_questions
         "Vasili":
-            jump vas_1_questions
+            jump vas_2_questions
 
     # This ends the game.
 
@@ -95,23 +95,27 @@ label day_over:
     jump start
 
 label nv_continue:
-    #show bg files
+    show bg folder with dissolve(0.5)
+    if nv_stab >=60:
+        jump nv_stab_cure
+    elif nv_stab <=0:
+        jump nv_stab_breakup
     menu:
         "What is happening today?"
-        "Natasha and Vasili appointment":
+        "Natascha and Vasili appointment":
             jump nv_re_enter
         "Pass the day and do nothing":
             jump do_nothing_day
 
 label do_nothing_day:
-    "You do nothing today, +$50. Natasha and Vasili don't seem to be doing any better, however"
+    "You do nothing today, +$50. Natascha and Vasili don't seem to be doing any better, however"
 
 label nv_re_enter:  
     "The couple re-enter your office"
     p "Welcome back!"
     menu:
         "Who do you want to talk to today?"
-        "Natasha":
+        "Natascha":
             jump nat_1_questions
         "Vasili":
             jump vas_2_questions
@@ -127,19 +131,19 @@ label nat_1_questions:
 
 label nat_1a:
     p "Natascha, is it ok if I ask about your childhood?  The more I know of your upbringing, the better I can understand the… {i}dysfunctions{/i} of your relationship.  If you don’t feel comfortable I understand."
-    if nvtrust < 4:
+    if nat_trust < 4:
         nat "I… Don’t want to talk about that.  I am sorry."
         jump day_over
     else:
-        nat " If it will help yes. Me and Vasili were together since childhood, not romantically at first. But he was my only friend growing up, "
+        nat "If it will help, yes. Me and Vasili were together since childhood, not romantically at first. But he was my only friend growing up, "
         #(blush) 
         extend "he used to be so sweet.  "
         #(flustered) 
-        nat "N-n-not that he isn’t now! I- I am just such a klutz and he has to deal with me so much he gets tired. It’s hard for him to show his love like he used to."
+        nat "N-n-not that he isn’t now! I-I am just such a klutz and he has to deal with me so much he gets tired. It’s hard for him to show his love like he used to."
         #(sad)
-        nat "I- I’m just so much to deal with."
+        nat "I-I’m just so much to deal with."
         p "Hmm... I see"
-        menu "1_a_choices":
+        menu:
             "What should I do now?"
             "Ask about other relationships":
                 jump nat_1a_a
@@ -149,17 +153,17 @@ label nat_1a:
                 jump nat_1a_c
             
 label nat_1a_a:
-    p "Natasha, you never mentioned anyone but Vasili, have you had any other relationships?"
+    p "Natascha, you never mentioned anyone but Vasili, have you had any other relationships?"
     nat "Uh… I don’t remember any other relationships.  There was one… {w}but Vasili saved me from the heartache"
     menu:
         "What should I do now?"
-        "Commend Natasha for being faithful to Vasili":
+        "Commend Natascha for being faithful to Vasili":
             jump nat_1a_a_a
-        "Question Natasha about the previous relationship":
+        "Question Natascha about the previous relationship":
             jump nat_1a_a_b
         
 label nat_1a_a_a:
-    p "Natasha, I commend you for being so faithful to Vasili."
+    p "Natascha, I commend you for being so faithful to Vasili."
     $ vas_trust += 1
     $ nv_stab += 5
     nat "That is how love is supposed to be, right?"
@@ -168,7 +172,7 @@ label nat_1a_a_a:
     jump day_over
 
 label nat_1a_a_b:
-    p "Natasha tell me more about this boy before Vasili."
+    p "Natascha tell me more about this boy before Vasili."
     #if nat_trust <5:
     #   nat "It’s in the past, no need to bring that up again."
     #    jump day_over
@@ -182,9 +186,8 @@ label nat_1a_a_b:
     vas "Can't trust bakers! Hahahahehe"
 
     menu:
-        ""
         "Tell her that Vasili was probably wrong":
-            p "Natasha, Vasili was wrong, that boy probably had feelings for you."
+            p "Natascha, Vasili was wrong, that boy probably had feelings for you."
             vas "That’s preposterous! Look at her! How can anyone love… THIS.  She’s lucky to have me!"
             $ vas_trust -= 3
 
@@ -203,7 +206,7 @@ label nat_1a_a_b:
             jump day_over
         
 label nat_1a_b:
-    p "Natasha I must commend you for coming to me to try and fix any issues the two of you might have had instead of just leaving for another man."
+    p "Natascha I must commend you for coming to me to try and fix any issues the two of you might have had instead of just leaving for another man."
     p "Many couples are not strong enough to try to fix their issues."
     nat "Of course, I love my husband."
     $ nv_stab += 1 
@@ -222,14 +225,14 @@ label nat_1a_c:
     $ nv_breakup += 1
     if nv_breakup == 3:
         jump nv_breakup_scene
-    v Of course not dear, this therapist is seeming more like a quack by the second. 
+    v "Of course not dear, this therapist is seeming more like a quack by the second." 
     $ vas_trust -= 1
 
     jump day_over
 
 label nat_1b:
     p "Can I ask about your family?  It’s nice to get a feel for someone’s guidance when trying to diagnose issues."
-    if nvtrust < 3:
+    if nat_trust < 3:
         nat "I apologize, but I doubt that will help me fix my marriage…"
         jump day_over
     else:
@@ -258,7 +261,7 @@ label nat_1b_a:
         p "I see."
 
         p "What happened between your father and Vasili?"
-        v "ABSOLUTELY NOTHING! And yet, when I started getting romantically involved with his daughter, he bad mouthed me and called me manipulative!"
+        vas "ABSOLUTELY NOTHING! And yet, when I started getting romantically involved with his daughter, he bad mouthed me and called me manipulative!"
 
         menu:
             "What should I say?"
@@ -280,7 +283,7 @@ label nat_1b_a_a_a:
     jump day_over
 
 label nat_1b_a_a_b:
-    p "Preposterous! You have been nothing but good to Natasha!"
+    p "Preposterous! You have been nothing but good to Natascha!"
     vas "FINALLY, someone else sees sense.  I’m glad we came to you, anyone else would have no sense!"
     nat "I guess he was a bit… over dramatic." 
     $ nv_stab += 5
@@ -298,7 +301,7 @@ label nat_1b_b:
 
     menu:
             "What should I say?"
-            "Defend Natasha's brother":
+            "Defend Natascha's brother":
                 jump nat_1b_b_a
             "Stay silent":
                 jump day_over
@@ -335,11 +338,117 @@ label vas_2_questions:
     menu:
         "Upbringing":
             jump vas_2a
-        "Childhood with Natasha":
+        "Childhood with Natascha":
             jump vas_2b
 
 label vas_2a:
-    "Noto Implementato"
+    p "Vasili may I ask what your upbringing was like? I ask this to all of my clients since it might give me an insight to any uhh... {i}problems{/i} occurring in the relationship." 
+    p "If you don’t feel comfortable talking about your childhood that’s alright too."
+    vas "I had a very normal upbringing in most senses, the most outstanding thing I can think of is that I was adopted."
+    vas "But I was adopted by a father that truly cared for me.  He fed me{w}, clothed me{w}, sent me to school{w}, beat me when I misbehaved{w}, and taught me right or wrong.  Altogether a stellar father."
+    
+    menu:
+        "Where should I go with this next?"
+        "Ask about abuse":
+            jump vas_2a_a
+        "Ask about biological parents":
+            jump vas_2a_b
+        "Compliment father":
+            jump vas_2a_c
+        
+    
+label vas_2a_a:
+    p "Has your father ever done something he shouldn't have done as a parent? Perhaps, hurt you in some way?"
+    if vas_trust < 5:
+        vas "You tryin' to say my father did something wrong? {p}{i}scoff{/i}"
+        vas "That man did everything right"
+        jump day_over
+    else:
+        vas "He hurt me yes, but in some ways, it was a requirement for my growth as a young boy."
+        vas "I was always getting into trouble and I needed discipline. I guess he was... showing his love."
+        menu:
+            "Tell Vassili he was abused as a child":
+                jump vas_2a_a_a
+            "Compliment the father’s discipline technique":
+                jump vas_2a_a_b
+            
+label vas_2a_a_a:
+    p "Vasilli, the punishments your father used to teach you… What were they?"
+    vas  "Friend, do not get me wrong, my father never did anything to me that I didn’t deserve." 
+    vas "Looking back I can see he loved me greatly. The worst he’s ever done is beat me for the things I did."
+    p "What did you do to deserve the beatings?"
+    vas "There was this one time, keep in mind I was young, where I wanted a toy rocket." 
+    vas "I asked both my mother and my father but they said children have no need for things."
+    p "Children have no need for toys?"
+    vas "Ahh, I see where your coming from, but the toys are a luxury for the aristocrats."
+    p "I see." 
+    p "*internally* {i}I don’t think my children would be too happy if they had no toys at home. God knows, I don't have enough time for them…{/i}"
+    p "Continue."
+    vas "Ah yes, anyway, I wanted the toy rocket so badly, I considered stealing it."
+    p "I see so they beat you for stealing?"
+    vas "No No No, I am no thief! But they did read my plans in my journal."
+    vas "That was enough to make papa angry. He burned my hand with a spoon. I never thought about stealing again."
+    p "I thought you said he beat you."
+    vas "Beat, burn, what is the difference, all discipline right?"
+    p "*internally* {i}This is a turning point for Vasilli. I can either choose to help his relationship, or make him feel like he needs me more than ever. What should I do?{/i}"
+
+    $ nv_stab += 10
+    $ nv_cure += 1
+    if nv_cure == 5:
+        jump nv_cure_scene
+    jump day_over
+
+label vas_2a_a_b:
+    p "So rare to see a father who cares for their children so much, that they would raise a hand to them." 
+    p "Your father has good senses. Otherwise you would not have grown to such a fine young man."
+    vas "I am glad you see it that way, Natascha thought that it was abuse. I told her, \"no Natty, there are children who are ACTUALLY abused who am I to lower their worth?\""
+    p "I don’t expect much from someone who had no mother.  How would she know parenting when she was missing two from the start?"
+    #Again, you are an awful person. Love, Dale
+
+    $ nv_stab += 5
+    $ vas_trust += 3
+    jump day_over
+
+label vas_2a_b:
+    p "So adoption... that couldn’t have been good for you."  
+    p "Do you know who your biological parents are?"
+    vas "I remember a man and a woman were stressed about something and then I didn’t see them anymore."  
+    vas "The time and place where I remember from makes me believe they were my biologicals."
+    vas "I don’t remember much after that. Just that I wasn’t wanted."
+    p "How old were you when you were adopted?"
+    vas "I was a very young boy, chum, I can’t exactly remember... maybe seven?"
+    menu:
+        "Reason about why they gave you up":
+            jump vas_2a_b_a
+        "Say nothing":
+            p "..."
+            jump day_over
+        
+
+label vas_2a_b_a:
+    p "If you were seven, that would place them giving you away during the recession, maybe they couldn’t afford you."  
+    p "It doesn’t mean you weren’t wanted."
+    vas "So what, I was still tossed aside…"
+    p "Do you think maybe that you attack Natascha emotionally because the only way you were shown love is the threat of abandonment and anger?"
+    vas "W-W-What?  That’s preposterous… isn’t it?" 
+    $ nv_cure += 1
+    if nv_cure == 5:
+        jump nv_cure_scene
+    jump day_over
+
+label vas_2a_c:
+    p "It sounds like your father wanted the best for you to grow up to be a tough individual."
+    vas "Yes he only wanted the best for me. He was a good man. Although Natty seems to disagree."
+    nat "H-he was abu…"
+    vas "For the last time, you dolt, he was old fashioned not abusive."
+    $ vas_trust += 1
+    jump day_over
 
 label vas_2b:
     "Noto Implementato"
+
+label nv_breakup_scene:
+    "OwO"
+
+label nv_cure_scene:
+    "UwU"
