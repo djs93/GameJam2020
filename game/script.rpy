@@ -10,6 +10,7 @@ default nat_trust = 3
 default vas_trust = 3
 default day = 0
 default child_die_streak = 0
+default cash = 0
 
 default nv_cure = 0 # Trigger special ending on 5
 default nv_breakup = 0 # Trigger special ending on 3
@@ -90,6 +91,7 @@ label nv_intro:
 label day_over:
     p "I think that's enough for today, see you two for the next appointment"
     $ day += 1
+    $ cash += 50
     jump start
 
 label nv_continue:
@@ -117,11 +119,14 @@ label do_nothing_day:
         jump nv_trust_fail
     if vas_trust < 3:
         extend "Vasili has forgotten your payment. "
+        $ child_die_streak += 1
         if child_die_streak == 1 or child_die_streak == 2:
             extend "It's the [child_die_streak] day in a row he's forgotten, I need to get friendlier with him."
         elif child_die_streak >=3:
             jump children_ded
     "You do nothing today, +$50. Natascha and Vasili don't seem to be doing any better, however"
+    $ cash += 50
+    $ nv_stab -= 5 # discuss increase/modification (scale over time not talked?)
 
 label nv_re_enter:  
     "The couple re-enter your office"
@@ -340,7 +345,7 @@ label nat_1b_c:
     $ vas_trust += 1
     nat "I-I-I can’t help it. I-I-Its not true... {i}avoids eye contact{/i}" 
     $ nat_trust -= 2
-
+    jump day_over
 
 label vas_2_questions:
     menu:
@@ -537,25 +542,51 @@ label vas_2b_c:
     $ vas_trust += 1
     $ nv_stab += 20
     $ nat_trust -= 1
-
+    jump day_over
 
 label nv_breakup_scene:
-    "OwO"
+    p "Natascha divorced Vasili, she realized that things were not gonna change.  Vasili… {w}did not take it well."
+    p  "He {w 0.6}.{w 0.6}.{w 0.6}. hung himself in the family attic last week."
+    p  "My cash flow has stopped. {w}My children are hungry. {w}I fear we will not make it."
+
+    return
 
 label nv_cure_scene:
-    "UwU"
+    p "Vasili has been striving to improve, his love for Natascha is showing more and more, and he has been trying to make amends."
+    p "I fixed this relationship correctly, but I fear for my children. {w}They have not eaten in days. {w}I have not eaten in days."
+    p "I need a new client soon."
+
+    return
 
 label nv_day_max_scene:
-    "OWO"
+    p "It has been a month. {w}I keep milking this couple for every cent they make."
+    p "My family will be safe for years, and I think they will be none the wiser." 
+    p "I feel bad for Natascha but there's nothing I can do… my family needs food."
+
+    return
 
 label nv_stab_breakup:
-    "Stabby"
+    p "The funny thing about a couple breaking up is that the couple does not need a {i}couple’s therapist anymore.{/i}"
+    p "I have no client. {w}And soon I will starve. {w}At least I am happy that awful relationship is over."
+
+    return
 
 label nv_stab_cure:
-    "Stubby"
+    p "If brainwashing was a thing, I believe I have brainwashed Natascha into thinking of Vasili as a king and herself his concubine."
+    p "She listens without hesitation. {w}{p}She continues to be the only one to work, and Vasili continues to keep his grip over her." 
+    p "Instead of being grateful for my work, however, I have not found another client and he refuses to help me."
+    p "Soon my family will perish."
+
+    return
 
 label nv_trust_fail:
-    "Wow ur bad"
-    
+    p "The couple stopped showing up after that. {w}I must have lost the trust of Natascha, it was her who convinced Vasili to come to me, afterall."
+    p "I need to find a new client soon, my family is hungry and I fear we won't have much longer."
+
+    return
+
 label children_ded:
-    "Oh God, they're ded"
+    p "My family has not eaten in days. {w}My children have moved on from this wretched world."
+    p "I shall be joining them soon."
+
+    return
