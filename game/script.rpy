@@ -1,7 +1,4 @@
-﻿# The script of the game goes in this file.
-
-# Declare characters used by this game. The color argument colorizes the
-# name of the character.
+﻿# I'VE. BECOME SO NUMB. 
 
 define nat = Character("Natascha", who_color="#985298")
 define vas = Character("Vasili", who_color="#580000")
@@ -12,6 +9,7 @@ default nv_stab = 30 # At 0, breakup. 60 cure.
 default nat_trust = 3
 default vas_trust = 3
 default day = 0
+default child_die_streak = 0
 
 default nv_cure = 0 # Trigger special ending on 5
 default nv_breakup = 0 # Trigger special ending on 3
@@ -100,6 +98,12 @@ label nv_continue:
         jump nv_stab_cure
     elif nv_stab <=0:
         jump nv_stab_breakup
+    elif nv_cure == 5:
+        jump nv_cure_scene
+    elif nv_breakup == 3:
+        jump nv_breakup_scene
+    elif day == 30:
+        jump nv_day_max_scene
     menu:
         "What is happening today?"
         "Natascha and Vasili appointment":
@@ -108,6 +112,15 @@ label nv_continue:
             jump do_nothing_day
 
 label do_nothing_day:
+    "You do nothing today. "
+    if nat_trust < 1:
+        jump nv_trust_fail
+    if vas_trust < 3:
+        extend "Vasili has forgotten your payment. "
+        if child_die_streak == 1 or child_die_streak == 2:
+            extend "It's the [child_die_streak] day in a row he's forgotten, I need to get friendlier with him."
+        elif child_die_streak >=3:
+            jump children_ded
     "You do nothing today, +$50. Natascha and Vasili don't seem to be doing any better, however"
 
 label nv_re_enter:  
@@ -198,8 +211,7 @@ label nat_1a_a_b:
                 nat "Vasili… why would you lie about that…"
                 $ nv_stab -= 20
                 $ nv_breakup += 1
-                if nv_breakup == 3:
-                    jump nv_breakup_scene
+                
 
             jump day_over
         "Say nothing":
@@ -223,8 +235,6 @@ label nat_1a_c:
     $ nv_stab -= 1
     $ nat_trust -= 1
     $ nv_breakup += 1
-    if nv_breakup == 3:
-        jump nv_breakup_scene
     v "Of course not dear, this therapist is seeming more like a quack by the second." 
     $ vas_trust -= 1
 
@@ -275,8 +285,6 @@ label nat_1b_a_a_a:
     vas "That's ridiculous! You are a SHIT therapist!"
     nat "My father was always good at reading people…" 
     $ nv_breakup += 1
-    if nv_breakup == 3:
-        jump nv_breakup_scene
     $ vas_trust -= 2
     vas "Your father was stupid!"
 
@@ -394,8 +402,6 @@ label vas_2a_a_a:
 
     $ nv_stab += 10
     $ nv_cure += 1
-    if nv_cure == 5:
-        jump nv_cure_scene
     jump day_over
 
 label vas_2a_a_b:
@@ -432,8 +438,6 @@ label vas_2a_b_a:
     p "Do you think maybe that you attack Natascha emotionally because the only way you were shown love is the threat of abandonment and anger?"
     vas "W-W-What?  That’s preposterous… isn’t it?" 
     $ nv_cure += 1
-    if nv_cure == 5:
-        jump nv_cure_scene
     jump day_over
 
 label vas_2a_c:
@@ -445,10 +449,113 @@ label vas_2a_c:
     jump day_over
 
 label vas_2b:
-    "Noto Implementato"
+    p "So how did the two of you meet?"
+    vas "Well, chum, to be honest, my mother forced me to make friends with my dear Natty"
+    menu:
+        "Ask about if he wanted to be friends with her":
+            jump vas_2b_a
+        "Ask if they ever got along with each other":
+            jump vas_2b_b
+        "Tell him he is a saint":
+            jump vas_2b_c
+
+label vas_2b_a:
+    p "You said you were forced to be Natascha’s friend did a part of you ever actually want to?"
+    nat "He says this constantly. I don’t believe it myself.  He's just trying to be tough."
+    vas "I was forced to be friends with you. {w}My mother pitied you. {w}She knew you had no mother, and she asked me to hang out with you."
+    vas "Everytime I brought you home, she tried mothering you. It was preposterous."
+    nat "Even if that were true! Why would you propose then, surely she wouldn't tell you to do that!"
+    vas "I had wasted so much time on you I thought I should get something from it."  
+    vas "Turns out I was stupid to do even that. {w}I could’ve married Hilla."
+    nat "The girl with the buck teeth?!"
+    vas "Buck teeth, but easily identifiable as a woman."
+
+    menu:
+        "You love Natascha correct?":
+            jump vas_2b_a_a
+        "...":
+            jump vas_2b_a_b
+        
+label vas_2b_a_a:
+    p "You love Natascha correct?"
+    vas "Of course I love my wife!"
+    p "Then why not compliment her?"
+    vas "B-because"
+    p "Because what Vasili?"
+    vas "If I do that… she’ll realize I am not good enough for her and leave me."
+    nat "Vasi, why would you think that? I love you!"
+    vas "I-I-I am not sure…" 
+    $ nv_cure += 1
+    
+    jump day_over
+
+label vas_2b_a_b:
+    p "..."
+    vas "I should have married Hilla."
+    nat "I-I-I am sorry I am not her!  I’m sorry I can’t compete with her!"
+    "Natascha storms out of the room"
+    vas "Natty! Get back here!"
+    "Vasili struggles to get up and hobbles after her"
+
+    $ nv_breakup += 1
+    $ nv_stab -+ 20
+    jump day_over
+
+
+label vas_2b_b:
+    p "In all your years together, did you ever like being together?"
+    vas "Of course! I love Natascha!"
+    nat "Y-y-you do?"
+    vas "Natty, how could you say such a thing! Of course I do."
+    p "See, that's good, show her the affection you have!"
+    vas "To answer your question, we’ve always been good. "
+    vas "Recently, however, Natty has had her brother fill her head with LIES."
+
+    menu:
+        "Argue for more than one view":
+            jump vas_2b_b_a
+        "Say nothing":
+            p "I see..."
+            jump day_over
+        
+label vas_2b_b_a:
+    p "Sometimes an outside perspective is key in understanding our own shortcomings."
+    vas "Are you agreeing with her gremlin brother?!"
+    p "Vasili, I have only met you just today, you seem charming but someone who's known you for a while is saying you need help. And according to rumors, everyone agrees."
+    vas "I-I-I am sorry, I thought… people were ok with how I was."
+    nat "I am Vasili, I love you."
+    vas "I want to change Natty. I really do."
+    $ nv_cure += 1
+    $ nv_stab += 20
+
+    jump day_over
+
+label vas_2b_c:
+    p "Vasili you’re such a kind person for dealing with her, truly a saint."
+    vas "Thank you, chum, my dear Natty is lucky to have me."
+    nat "Y-Yes of course I am."
+    $ vas_trust += 1
+    $ nv_stab += 20
+    $ nat_trust -= 1
+
 
 label nv_breakup_scene:
     "OwO"
 
 label nv_cure_scene:
     "UwU"
+
+label nv_day_max_scene:
+    "OWO"
+
+label nv_stab_breakup:
+    "Stabby"
+
+label nv_stab_cure:
+    "Stubby"
+
+label nv_trust_fail:
+    "Wow ur bad"
+    
+label children_ded:
+    "Oh God, they're ded"
